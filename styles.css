@@ -1,0 +1,261 @@
+/* Student Logs - UVU Branded Stylesheet */
+/* Colors from: uvu.edu/web/support/300-design-format/301-approved-colors.html */
+/* Font: Rajdhani (official UVU web font, replaces Stratum) */
+
+* {
+  box-sizing: border-box;
+}
+
+/* base body styles */
+body {
+  padding: 20px 40px;
+  font-family: 'Rajdhani', Arial, sans-serif;
+  max-width: 850px;
+  margin: 0 auto;
+  transition: background-color 0.3s, color 0.3s; /* smooth transition when switching themes */
+}
+
+/* ===== LIGHT MODE ===== */
+body.light {
+  background-color: #f9f9f9; /* UVU grey-xlight */
+  color: #000;
+}
+
+body.light header {
+  background-color: #275d38; /* UVU green (primary) */
+  color: #fff;
+}
+
+body.light select {
+  background-color: #275d38;
+  color: #fff;
+}
+
+body.light input {
+  background-color: #fff;
+  border: 2px solid #275d38;
+  color: #000;
+}
+
+body.light textarea {
+  background-color: #fff;
+  border: 2px solid #275d38;
+  color: #000;
+}
+
+body.light button[data-cy='add_log_btn'] {
+  background-color: #275d38;
+  color: #fff;
+}
+
+/* greyed out button when disabled */
+body.light button[data-cy='add_log_btn']:disabled {
+  background-color: #8e8c89; /* UVU silver */
+  color: #e8e8e8;
+}
+
+body.light li {
+  background-color: #e8e8e8; /* UVU grey */
+  border-left: 4px solid #275d38;
+}
+
+body.light h3 {
+  color: #275d38;
+}
+
+/* ===== DARK MODE ===== */
+/* uses darker shades from UVU color palette */
+body.dark {
+  background-color: #1e1e1e;
+  color: #e8e8e8;
+}
+
+body.dark header {
+  background-color: #1e482c; /* UVU green-d2 */
+  color: #fff;
+}
+
+body.dark select {
+  background-color: #235332; /* UVU green-d1 */
+  color: #fff;
+}
+
+body.dark input {
+  background-color: #2a2a2a;
+  border: 2px solid #3f6f4e; /* UVU green-l1 */
+  color: #e8e8e8;
+}
+
+body.dark textarea {
+  background-color: #2a2a2a;
+  border: 2px solid #3f6f4e;
+  color: #e8e8e8;
+}
+
+body.dark button[data-cy='add_log_btn'] {
+  background-color: #3f6f4e;
+  color: #fff;
+}
+
+body.dark button[data-cy='add_log_btn']:disabled {
+  background-color: #444;
+  color: #777;
+}
+
+body.dark li {
+  background-color: #2a2a2a;
+  border-left: 4px solid #3f6f4e;
+}
+
+body.dark h3 {
+  color: #6f937a; /* UVU green-l3 - lighter green for readability on dark bg */
+}
+
+body.dark label {
+  color: #e8e8e8;
+}
+
+/* ===== HEADER ===== */
+header {
+  padding: 15px 20px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+
+/* flexbox to put logo, title, and toggle button in a row */
+.header-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* UVU logo - inverted to white so it shows on the green header */
+.uvu-logo {
+  height: 40px;
+  filter: brightness(0) invert(1);
+}
+
+header h1 {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  margin: 0;
+  flex-grow: 1; /* pushes the toggle button to the right */
+}
+
+/* theme toggle button styling */
+#themeToggle {
+  background: none;
+  border: 2px solid #fff;
+  color: #fff;
+  padding: 5px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.9rem;
+}
+
+#themeToggle:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* ===== FORM ELEMENTS ===== */
+select {
+  border-radius: 4px;
+  border: none;
+  padding: 8px 12px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+label {
+  font-weight: 600;
+  font-size: 1rem;
+  margin-top: 10px;
+  display: inline-block;
+}
+
+input {
+  border-radius: 4px;
+  padding: 8px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1rem;
+  width: 200px;
+}
+
+textarea {
+  width: 100%;
+  border-radius: 4px;
+  padding: 8px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+button[data-cy='add_log_btn'] {
+  border: none;
+  border-radius: 4px;
+  padding: 8px 20px;
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 10px;
+  display: block;
+}
+
+button[data-cy='add_log_btn']:disabled {
+  cursor: not-allowed;
+}
+
+/* ===== LOG ENTRIES ===== */
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  padding: 10px 15px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  cursor: pointer; /* shows it's clickable (for toggle) */
+}
+
+li:hover {
+  opacity: 0.85;
+}
+
+li small {
+  font-weight: 600;
+}
+
+/* pre-wrap so long log text doesn't overflow */
+li pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  margin: 5px 0 0 0;
+}
+
+h3 {
+  font-weight: 600;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  body {
+    padding: 10px 15px;
+  }
+
+  .header-row {
+    flex-wrap: wrap;
+  }
+
+  header h1 {
+    font-size: 1.2rem;
+  }
+
+  input {
+    width: 100%;
+  }
+}

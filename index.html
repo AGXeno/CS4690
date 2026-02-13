@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <title>Student Logs</title>
+    <meta charset="utf-8" />
+
+    <!-- UVU favicon using their monogram SVG -->
+    <link
+      rel="icon"
+      href="https://www.uvu.edu/_common/images/uvu-mono.svg"
+      type="image/svg+xml"
+    />
+
+    <!-- Rajdhani: UVU's official web font (replaces Stratum for web use) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Axios CDN for AJAX calls (replaces fetch) -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Header with UVU logo and dark/light mode toggle -->
+    <header>
+      <div class="header-row">
+        <img
+          src="https://www.uvu.edu/_common/images/uvu-mono.svg"
+          alt="UVU Logo"
+          class="uvu-logo"
+        />
+        <h1>Student Logs</h1>
+        <!-- Toggle button for switching between dark and light mode -->
+        <button id="themeToggle" aria-label="Toggle dark/light mode">
+          ☀️ Light
+        </button>
+      </div>
+    </header>
+
+    <form>
+      <!-- Course dropdown - options loaded dynamically via axios -->
+      <select
+        aria-label="Select Course"
+        id="course"
+        name="course"
+        data-cy="course_select"
+      >
+        <option selected value="">Choose Courses</option>
+      </select>
+      <br />
+
+      <!-- UVU ID input - hidden until a course is selected -->
+      <label for="uvuId">UVU ID</label><br />
+      <input
+        type="text"
+        id="uvuId"
+        name="uvuId"
+        data-cy="uvuId_input"
+        placeholder="10234567"
+        maxlength="8"
+        pattern="[0-9]*"
+      />
+
+      <!-- Shows which student's logs we're viewing -->
+      <h3 id="uvuIdDisplay" data-cy="uvuIdDisplay"></h3>
+
+      <!-- Log entries get added here dynamically -->
+      <ul data-cy="logs"></ul>
+
+      <!-- Textarea for new log entry -->
+      <label>New Log</label><br />
+      <textarea
+        style="height: 75px"
+        aria-label="add log textarea"
+        data-cy="log_textarea"
+      ></textarea>
+      <br />
+
+      <!-- Disabled by default, enabled when logs loaded and textarea has text -->
+      <button type="submit" data-cy="add_log_btn" disabled>Add Log</button>
+    </form>
+
+    <script src="script.js"></script>
+  </body>
+
+  <!-- DONE: set the lang attribute to American English -->
+  <!-- DONE: set the characterset to utf8 -->
+  <!-- DONE: UVU favicon -->
+  <!-- DONE: Load the CSS file -->
+  <!-- DONE: Load the JS file -->
+  <!-- DONE: Axios CDN loaded (replaced fetch with axios) -->
+  <!-- DONE: UVU branding - logo, colors, fonts -->
+  <!-- DONE: Dark/Light mode toggle with localStorage -->
+  <!-- DONE: write `10234567` as sample data on the input field -->
+  <!-- DONE: Ensure the character length never exceeds 8 -->
+  <!-- DONE: Only numbers, no letters or other characters -->
+  <!-- DONE: When character length reaches 8, fire off ajax request -->
+  <!-- DONE: Button disabled until logs displayed and textarea has text -->
+  <!-- DONE: Don't show uvu id input until course selected -->
+  <!-- DONE: If course unselected, hide uvu id input -->
+  <!-- DONE: Click on log to toggle visibility -->
+  <!-- DONE: Courses fetched dynamically via axios -->
+</html>
