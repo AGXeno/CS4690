@@ -1,278 +1,196 @@
-// Student Logs App
-// All AJAX uses axios (CDN loaded in index.html)
-
-// API base URL - update this if your StackBlitz URL changes
-const API_BASE =
-  'https://jsonserverjh9ne2-bwrx--3000--31fc58ec.local-corp.webcontainer.io';
-
-// grab all the elements we need from the page
-const courseSelect = document.getElementById('course');
-const uvuIdInput = document.getElementById('uvuId');
-const uvuIdDisplay = document.getElementById('uvuIdDisplay');
-const logsList = document.querySelector('ul[data-cy="logs"]');
-const textarea = document.querySelector('textarea');
-const addButton = document.querySelector('button[data-cy="add_log_btn"]');
-const themeToggle = document.getElementById('themeToggle');
-
-// ========== DARK/LIGHT MODE ==========
-// Assignment requires checking in this order:
-// 1. User's stored preference (localStorage)
-// 2. Browser preference
-// 3. OS preference
-// 4. Default to light if none found
-
-// check if user saved a theme preference before
-function getUserPref() {
-  const stored = localStorage.getItem('theme');
-  if (stored === 'dark' || stored === 'light') return stored;
-  return 'unknown';
-}
-
-// check what the browser prefers
-function getBrowserPref() {
-  if (window.matchMedia) {
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches)
-      return 'dark';
-    if (window.matchMedia('(prefers-color-scheme: light)').matches)
-      return 'light';
-  }
-  return 'unknown';
-}
-
-// check what the OS prefers
-// note: browser usually reads this from the OS, so they tend to match
-function getOSPref() {
-  try {
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches)
-      return 'dark';
-    if (window.matchMedia('(prefers-color-scheme: light)').matches)
-      return 'light';
-  } catch (e) {
-    // matchMedia might not be supported
-  }
-  return 'unknown';
-}
-
-// apply the theme by adding a class to body
-function applyTheme(theme) {
-  document.body.classList.remove('light', 'dark');
-  document.body.classList.add(theme);
-  // update button text to show the opposite option
-  if (theme === 'dark') {
-    themeToggle.textContent = '☀️ Light';
-  } else {
-    themeToggle.textContent = '🌙 Dark';
-  }
-}
-
-// run on page load - figure out which theme to use
-function initTheme() {
-  const userPref = getUserPref();
-  const browserPref = getBrowserPref();
-  const osPref = getOSPref();
-
-  // print to console as required by assignment
-  console.log('User Pref: ' + userPref);
-  console.log('Browser Pref: ' + browserPref);
-  console.log('OS Pref: ' + osPref);
-
-  // cascade: start with default, override with each level if it exists
-  let theme = 'light';
-  if (osPref !== 'unknown') theme = osPref;
-  if (browserPref !== 'unknown') theme = browserPref;
-  if (userPref !== 'unknown') theme = userPref;
-
-  applyTheme(theme);
-}
-
-// when user clicks the toggle, switch theme and save it
-themeToggle.addEventListener('click', function () {
-  const current = document.body.classList.contains('dark') ? 'dark' : 'light';
-  const newTheme = current === 'dark' ? 'light' : 'dark';
-  localStorage.setItem('theme', newTheme);
-  applyTheme(newTheme);
-});
-
-// initialize theme on page load
-initTheme();
-
-// ========== COURSE SELECT / UVU ID VISIBILITY ==========
-
-// hide the UVU ID input and label until a course is picked
-uvuIdInput.style.display = 'none';
-document.querySelector('label[for="uvuId"]').style.display = 'none';
-
-// show/hide UVU ID input based on course selection
-courseSelect.addEventListener('change', function () {
-  if (courseSelect.value !== '') {
-    // course selected - show the input
-    uvuIdInput.style.display = 'block';
-    document.querySelector('label[for="uvuId"]').style.display = 'block';
-  } else {
-    // course unselected - hide input and clear everything
-    uvuIdInput.style.display = 'none';
-    document.querySelector('label[for="uvuId"]').style.display = 'none';
-    logsList.innerHTML = '';
-    uvuIdDisplay.textContent = '';
-    uvuIdInput.value = '';
-  }
-});
-
-// ========== FETCH COURSES ==========
-// load course options from the API using axios
-axios
-  .get(API_BASE + '/api/v1/courses')
-  .then(function (response) {
-    var data = response.data;
-    // loop through each course and add it as a dropdown option
-    data.forEach(function (course) {
-      var option = document.createElement('option');
-      option.value = course.id;
-      option.textContent = course.display;
-      courseSelect.appendChild(option);
-    });
-  })
-  .catch(function (error) {
-    console.error('Error fetching courses:', error);
-  });
-
-// ========== FETCH LOGS ==========
-// tracks whether logs have been loaded (used for button enable/disable)
-var logsLoaded = false;
-
-// when user types in the UVU ID field
-uvuIdInput.addEventListener('input', function () {
-  // strip out anything that isn't a number
-  uvuIdInput.value = uvuIdInput.value.replace(/[^0-9]/g, '');
-
-  var uvuId = uvuIdInput.value;
-
-  // once we have 8 digits, fetch the logs
-  if (uvuId.length === 8) {
-    var courseId = courseSelect.value;
-    uvuIdDisplay.textContent = 'Student Logs for ' + uvuId;
-
-    // get logs for this student and course
-    axios
-      .get(API_BASE + '/api/v1/logs', {
-        params: {
-          courseId: courseId,
-          uvuId: uvuId,
-        },
-      })
-      .then(function (response) {
-        var logs = response.data;
-        logsList.innerHTML = ''; // clear old logs
-
-        if (logs.length === 0) {
-          logsList.innerHTML = '<li>No logs found for this student.</li>';
+// Student Logs App - TypeScript + jQuery
+// All DOM manipulation uses jQuery (no document.* or window.*)
+// All AJAX uses jQuery $.get / $.ajax (no axios or fetch)
+// --- Constants ---
+var API_BASE = "https://json-server-qy0s.onrender.com";
+// --- jQuery ready (replaces window.onload) ---
+$(function () {
+    // Load saved theme from localStorage
+    var savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "dark") {
+        $("html").attr("data-bs-theme", "dark");
+        $("#themeToggle").text("☀️ Light Mode");
+    }
+    // Fetch courses on page load
+    loadCourses();
+    // --- Event: Theme toggle (Extra Credit) ---
+    $("#themeToggle").on("click", function () {
+        var current = $("html").attr("data-bs-theme") || "light";
+        if (current === "light") {
+            $("html").attr("data-bs-theme", "dark");
+            $("#themeToggle").text("☀️ Light Mode");
+            localStorage.setItem("theme", "dark");
         }
-
-        // build each log entry and add it to the list
-        logs.forEach(function (log) {
-          var li = document.createElement('li');
-          li.innerHTML =
-            '<div><small>' +
-            log.date +
-            '</small></div>' +
-            '<pre><p>' +
-            log.text +
-            '</p></pre>';
-
-          // clicking a log toggles the text visibility
-          li.addEventListener('click', function () {
-            var text = li.querySelector('pre');
-            if (text.style.display === 'none') {
-              text.style.display = 'block';
-            } else {
-              text.style.display = 'none';
+        else {
+            $("html").attr("data-bs-theme", "light");
+            $("#themeToggle").text("🌙 Dark Mode");
+            localStorage.setItem("theme", "light");
+        }
+    });
+    // --- Event: UVU ID input ---
+    $("#uvuId").on("input", function () {
+        var val = $(this).val();
+        // Only allow digits, max 8 characters
+        var cleaned = val.replace(/\D/g, "").slice(0, 8);
+        $(this).val(cleaned);
+        if (cleaned.length === 8) {
+            $("#uvuIdError").text("");
+            $("#course").prop("disabled", false);
+            // Populate the add-log form's UVU ID field
+            $("#newLogUvuId").val(cleaned);
+            // If a course is already selected, fetch logs
+            var selectedCourse = $("#course").val();
+            if (selectedCourse) {
+                fetchLogs(selectedCourse, cleaned);
             }
-          });
-
-          logsList.appendChild(li);
-        });
-
-        logsLoaded = true;
-        checkButton();
-      })
-      .catch(function (error) {
-        console.error('Error fetching logs:', error);
-        logsList.innerHTML =
-          '<li>Error loading logs. Check your connection.</li>';
-      });
-  } else {
-    // not 8 digits yet - clear display
-    uvuIdDisplay.textContent = '';
-    logsList.innerHTML = '';
-    logsLoaded = false;
-    checkButton();
-  }
-});
-
-// ========== BUTTON ENABLE/DISABLE ==========
-// button should only be enabled when logs are showing AND textarea has text
-function checkButton() {
-  if (logsLoaded && textarea.value.trim() !== '') {
-    addButton.disabled = false;
-  } else {
-    addButton.disabled = true;
-  }
-}
-
-// re-check button state whenever user types in textarea
-textarea.addEventListener('input', checkButton);
-
-// ========== ADD NEW LOG ==========
-addButton.addEventListener('click', function (e) {
-  e.preventDefault(); // stop form from actually submitting/refreshing
-
-  var uvuId = uvuIdInput.value;
-  var courseId = courseSelect.value;
-  var logText = textarea.value.trim();
-
-  if (!logText) return; // don't submit empty logs
-
-  // build the log object to send to the server
-  var now = new Date();
-  var dateStr = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
-
-  var newLog = {
-    courseId: courseId,
-    uvuId: uvuId,
-    date: dateStr,
-    text: logText,
-  };
-
-  // send the new log to the server
-  axios
-    .post(API_BASE + '/api/v1/logs', newLog)
-    .then(function (response) {
-      // add the new log to the page so user can see it right away
-      var li = document.createElement('li');
-      li.innerHTML =
-        '<div><small>' +
-        dateStr +
-        '</small></div>' +
-        '<pre><p>' +
-        logText +
-        '</p></pre>';
-
-      // same toggle behavior as other logs
-      li.addEventListener('click', function () {
-        var text = li.querySelector('pre');
-        if (text.style.display === 'none') {
-          text.style.display = 'block';
-        } else {
-          text.style.display = 'none';
         }
-      });
-
-      logsList.appendChild(li);
-      textarea.value = ''; // clear the textarea
-      checkButton(); // re-disable the button
-    })
-    .catch(function (error) {
-      console.error('Error adding log:', error);
-      alert('Could not save log. Try again.');
+        else {
+            $("#course").prop("disabled", true);
+            $("#logs").empty();
+            $("#addLogForm").hide();
+            if (cleaned.length > 0) {
+                $("#uvuIdError").text("UVU ID must be 8 digits");
+            }
+            else {
+                $("#uvuIdError").text("");
+            }
+        }
+    });
+    // --- Event: Course selection ---
+    $("#course").on("change", function () {
+        var courseId = $(this).val();
+        var uvuId = $("#uvuId").val();
+        if (courseId && uvuId.length === 8) {
+            fetchLogs(courseId, uvuId);
+            // Sync the add-log form's course dropdown
+            $("#newLogCourse").val(courseId);
+        }
+        else {
+            $("#logs").empty();
+            $("#addLogForm").hide();
+        }
+    });
+    // --- Event: Add Log form submission ---
+    $("#addLogForm").on("submit", function (e) {
+        e.preventDefault();
+        var courseId = $("#newLogCourse").val();
+        var uvuId = $("#newLogUvuId").val();
+        var text = $.trim($("#newLogText").val());
+        if (!courseId || !uvuId || !text)
+            return;
+        var newLog = {
+            courseId: courseId,
+            uvuId: uvuId,
+            date: new Date().toISOString(),
+            text: text,
+        };
+        // POST new log using jQuery AJAX
+        $.ajax({
+            url: "".concat(API_BASE, "/logs"),
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(newLog),
+            success: function () {
+                $("#newLogText").val("");
+                // Refresh the logs display
+                fetchLogs(courseId, uvuId);
+            },
+            error: function (_xhr, _status, err) {
+                console.error("Error adding log:", err);
+            },
+        });
+    });
+    // --- Event: Enable/disable add log button based on textarea content ---
+    $("#newLogText").on("input", function () {
+        var text = $.trim($(this).val());
+        $("[data-cy='add_log_btn']").prop("disabled", text.length === 0);
     });
 });
+// --- Functions ---
+/**
+ * Fetch all courses from the API and populate both dropdowns.
+ */
+function loadCourses() {
+    $.get("".concat(API_BASE, "/courses"), function (data) {
+        var $courseSelect = $("#course");
+        var $newLogCourse = $("#newLogCourse");
+        // Clear existing options except the placeholder
+        $courseSelect.find("option:not(:first)").remove();
+        $newLogCourse.find("option:not(:first)").remove();
+        // Add each course as an option to both dropdowns
+        $.each(data, function (_i, course) {
+            var $option = $("<option>").val(course.id).text(course.display);
+            $courseSelect.append($option);
+            $newLogCourse.append($option.clone());
+        });
+    }).fail(function (_xhr, _status, err) {
+        console.error("Error loading courses:", err);
+    });
+}
+/**
+ * Fetch logs for a given course and UVU ID, then render them.
+ */
+function fetchLogs(courseId, uvuId) {
+    $.get("".concat(API_BASE, "/logs"), { courseId: courseId, uvuId: uvuId }, function (data) {
+        renderLogs(data);
+        // Show the add-log form and enable the course dropdown
+        $("#addLogForm").show();
+        $("#newLogCourse").prop("disabled", false);
+        $("#newLogCourse").val(courseId);
+        $("#newLogUvuId").val(uvuId);
+    }).fail(function (_xhr, _status, err) {
+        console.error("Error fetching logs:", err);
+    });
+}
+/**
+ * Render an array of log entries into the #logs container.
+ * Each log is a Bootstrap accordion item that expands on click.
+ */
+function renderLogs(logs) {
+    var $logsContainer = $("#logs");
+    $logsContainer.empty();
+    if (logs.length === 0) {
+        $logsContainer.append($("<p>")
+            .addClass("text-muted fst-italic")
+            .text("No logs found for this student/course combination."));
+        return;
+    }
+    var $accordion = $("<div>")
+        .addClass("accordion")
+        .attr("id", "logsAccordion");
+    $.each(logs, function (i, log) {
+        var collapseId = "collapse-".concat(i);
+        var headingId = "heading-".concat(i);
+        // Format the date for display
+        var dateStr = new Date(log.date).toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+        // Build the accordion item using jQuery
+        var $item = $("<div>").addClass("accordion-item");
+        var $header = $("<h2>").addClass("accordion-header").attr("id", headingId);
+        var $button = $("<button>")
+            .addClass("accordion-button collapsed")
+            .attr({
+            type: "button",
+            "data-bs-toggle": "collapse",
+            "data-bs-target": "#".concat(collapseId),
+            "aria-expanded": "false",
+            "aria-controls": collapseId,
+        })
+            .text(dateStr);
+        var $collapseDiv = $("<div>")
+            .addClass("accordion-collapse collapse")
+            .attr({ id: collapseId, "aria-labelledby": headingId, "data-bs-parent": "#logsAccordion" });
+        var $body = $("<div>").addClass("accordion-body").text(log.text);
+        // Assemble
+        $header.append($button);
+        $collapseDiv.append($body);
+        $item.append($header).append($collapseDiv);
+        $accordion.append($item);
+    });
+    $logsContainer.append($accordion);
+}
