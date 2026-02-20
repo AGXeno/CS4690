@@ -18,7 +18,7 @@ interface LogEntry {
 }
 
 // --- Constants ---
-const API_BASE: string = "https://json-server-qy0s.onrender.com";
+const API_BASE: string = "http://localhost:3000";
 
 // --- jQuery ready (replaces window.onload) ---
 $(() => {

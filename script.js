@@ -2,7 +2,7 @@
 // All DOM manipulation uses jQuery (no document.* or window.*)
 // All AJAX uses jQuery $.get / $.ajax (no axios or fetch)
 // --- Constants ---
-var API_BASE = "https://json-server-qy0s.onrender.com";
+var API_BASE = "http://localhost:3000";
 // --- jQuery ready (replaces window.onload) ---
 $(function () {
     // Load saved theme from localStorage
