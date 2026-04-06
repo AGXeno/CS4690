@@ -80,6 +80,43 @@
             </div>
           </div>
 
+          <!-- Add Course form -->
+          <form id="addCourseForm" class="border-top pt-3 mb-3">
+            <h5 class="mb-3">Add a New Course</h5>
+            <div class="row g-3 align-items-end">
+              <div class="col-md-3">
+                <label for="newCourseId" class="form-label">Course ID</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="newCourseId"
+                  data-cy="newCourseId"
+                  placeholder="e.g. cs1400"
+                />
+              </div>
+              <div class="col-md-4">
+                <label for="newCourseDisplay" class="form-label">Course Name</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="newCourseDisplay"
+                  data-cy="newCourseDisplay"
+                  placeholder="e.g. CS 1400"
+                />
+              </div>
+              <div class="col-md-3">
+                <button
+                  type="submit"
+                  class="btn btn-success"
+                  data-cy="add_course_btn"
+                  disabled
+                >
+                  Add Course
+                </button>
+              </div>
+            </div>
+          </form>
+
           <!-- Logs display area -->
           <div id="logs" data-cy="logs" class="mb-4"></div>
 

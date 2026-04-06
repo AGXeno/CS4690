@@ -105,6 +105,37 @@ $(function () {
         var text = $.trim($(this).val());
         $("[data-cy='add_log_btn']").prop("disabled", text.length === 0);
     });
+    // --- Event: Enable/disable add course button based on inputs ---
+    $("#newCourseId, #newCourseDisplay").on("input", function () {
+        var id = $.trim($("#newCourseId").val());
+        var display = $.trim($("#newCourseDisplay").val());
+        $("[data-cy='add_course_btn']").prop("disabled", !id || !display);
+    });
+    // --- Event: Add Course form submission ---
+    $("#addCourseForm").on("submit", function (e) {
+        e.preventDefault();
+        var id = $.trim($("#newCourseId").val());
+        var display = $.trim($("#newCourseDisplay").val());
+        if (!id || !display)
+            return;
+        var newCourse = { id: id, display: display };
+        $.ajax({
+            url: "".concat(API_BASE, "/courses"),
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(newCourse),
+            success: function () {
+                $("#newCourseId").val("");
+                $("#newCourseDisplay").val("");
+                $("[data-cy='add_course_btn']").prop("disabled", true);
+                // Auto-update GUI: refresh course dropdowns
+                loadCourses();
+            },
+            error: function (_xhr, _status, err) {
+                console.error("Error adding course:", err);
+            },
+        });
+    });
 });
 // --- Functions ---
 /**

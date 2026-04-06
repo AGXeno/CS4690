@@ -1,0 +1,4 @@
+MONGO_USERNAME=your_username
+MONGO_PASSWORD=your_password
+MONGO_URI=mongodb+srv://your_username:your_password@your_cluster.mongodb.net/p4?appName=p4
+PORT=3000

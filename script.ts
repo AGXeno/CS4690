@@ -129,6 +129,42 @@ $(() => {
     const text: string = $.trim($(this).val() as string);
     $("[data-cy='add_log_btn']").prop("disabled", text.length === 0);
   });
+
+  // --- Event: Enable/disable add course button based on inputs ---
+  $("#newCourseId, #newCourseDisplay").on("input", function () {
+    const id: string = $.trim($("#newCourseId").val() as string);
+    const display: string = $.trim($("#newCourseDisplay").val() as string);
+    $("[data-cy='add_course_btn']").prop("disabled", !id || !display);
+  });
+
+  // --- Event: Add Course form submission ---
+  $("#addCourseForm").on("submit", function (e: JQuery.SubmitEvent) {
+    e.preventDefault();
+
+    const id: string = $.trim($("#newCourseId").val() as string);
+    const display: string = $.trim($("#newCourseDisplay").val() as string);
+
+    if (!id || !display) return;
+
+    const newCourse: Course = { id, display };
+
+    $.ajax({
+      url: `${API_BASE}/courses`,
+      method: "POST",
+      contentType: "application/json",
+      data: JSON.stringify(newCourse),
+      success: () => {
+        $("#newCourseId").val("");
+        $("#newCourseDisplay").val("");
+        $("[data-cy='add_course_btn']").prop("disabled", true);
+        // Auto-update GUI: refresh course dropdowns
+        loadCourses();
+      },
+      error: (_xhr: JQuery.jqXHR, _status: string, err: string) => {
+        console.error("Error adding course:", err);
+      },
+    });
+  });
 });
 
 // --- Functions ---
