@@ -1,0 +1,51 @@
+/* UVU Theme — Green #275d38 */
+:root,
+[data-bs-theme='light'] {
+  --bs-primary: #275d38;
+  --bs-primary-rgb: 39, 93, 56;
+  --tenant-primary: #275d38;
+  --tenant-primary-hover: #1e4a2c;
+  --tenant-logo: url('https://www.uvu.edu/_common/images/uvu-mono.svg');
+}
+
+[data-bs-theme='dark'] {
+  --bs-primary: #275d38;
+  --bs-primary-rgb: 39, 93, 56;
+  --tenant-primary: #275d38;
+  --tenant-primary-hover: #1e4a2c;
+}
+
+.bg-tenant {
+  background-color: var(--tenant-primary) !important;
+}
+
+.btn-tenant {
+  background-color: var(--tenant-primary);
+  border-color: var(--tenant-primary);
+  color: #fff;
+}
+
+.btn-tenant:hover {
+  background-color: var(--tenant-primary-hover);
+  border-color: var(--tenant-primary-hover);
+  color: #fff;
+}
+
+.btn-outline-tenant {
+  color: var(--tenant-primary);
+  border-color: var(--tenant-primary);
+}
+
+.btn-outline-tenant:hover {
+  background-color: var(--tenant-primary);
+  color: #fff;
+}
+
+.text-tenant {
+  color: var(--tenant-primary) !important;
+}
+
+.sidebar-nav .nav-link.active {
+  background-color: var(--tenant-primary);
+  color: #fff !important;
+}

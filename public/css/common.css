@@ -1,0 +1,236 @@
+/* Shared styles across all pages */
+
+/* Force explicit body + surface colors per theme. Without these overrides
+   Bootstrap's defaults can leave dark-mode card/form bg colors bleeding
+   through when you toggle to light. Soft off-white is used in light mode
+   instead of pure #fff (easier on the eyes).
+   !important is used because Bootstrap utility classes (bg-light, bg-body,
+   etc.) and component CSS variables can otherwise win the cascade. */
+
+html[data-bs-theme='light'] {
+  background-color: #f4f1ec !important;
+  color: #1f2429 !important;
+}
+html[data-bs-theme='light'] body {
+  background-color: #f4f1ec !important;
+  color: #1f2429 !important;
+}
+html[data-bs-theme='light'] .card,
+html[data-bs-theme='light'] .card-body,
+html[data-bs-theme='light'] .list-group-item,
+html[data-bs-theme='light'] .form-control,
+html[data-bs-theme='light'] .form-select,
+html[data-bs-theme='light'] .accordion-item,
+html[data-bs-theme='light'] .accordion-button {
+  background-color: #fbfaf6 !important;
+  color: #1f2429 !important;
+  border-color: #d9d4cb !important;
+}
+
+html[data-bs-theme='dark'] {
+  background-color: #1a1d20 !important;
+  color: #dee2e6 !important;
+}
+html[data-bs-theme='dark'] body {
+  background-color: #1a1d20 !important;
+  color: #dee2e6 !important;
+}
+
+.brand-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.brand-header .brand-left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.brand-header .brand-left img {
+  height: 40px;
+}
+
+.sidebar-nav .nav-link {
+  color: inherit;
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  margin-bottom: 0.25rem;
+}
+
+.sidebar-nav .nav-link:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-nav .nav-link.active {
+  font-weight: 600;
+}
+
+[data-bs-theme='dark'] .sidebar-nav .nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.dashboard-section {
+  display: none;
+}
+
+.dashboard-section.active {
+  display: block;
+}
+
+.login-container {
+  max-width: 420px;
+  margin: 4rem auto;
+}
+
+.tenant-badge {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ===========================================================================
+   Tenant accent layer — adds school-color highlights to common UI elements
+   so both light and dark mode feel less monochrome. Pulls from the tenant
+   theme variables (--tenant-primary, --bs-primary-rgb) so each school keeps
+   its own identity.
+   =========================================================================== */
+
+/* Section headings get a tenant-color left bar */
+.dashboard-section > h4,
+.dashboard-section > h5 {
+  border-left: 4px solid var(--tenant-primary);
+  padding-left: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+/* Course cards: tenant-color top stripe + tinted header + hover lift */
+#coursesList .card,
+#myCoursesList .card,
+#availableCourses .card {
+  border-top: 3px solid var(--tenant-primary);
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+#coursesList .card:hover,
+#myCoursesList .card:hover,
+#availableCourses .card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1rem rgba(var(--bs-primary-rgb), 0.25) !important;
+}
+
+/* Course-card header: gradient wash of tenant color so the cards aren't
+   plain white/black. Stronger tint in dark mode for readability. */
+#coursesList .card .card-header,
+#myCoursesList .card .card-header,
+#availableCourses .card .card-header {
+  background: linear-gradient(
+    135deg,
+    rgba(var(--bs-primary-rgb), 0.12),
+    rgba(var(--bs-primary-rgb), 0.04)
+  ) !important;
+  border-bottom: 1px solid rgba(var(--bs-primary-rgb), 0.25);
+}
+html[data-bs-theme='dark'] #coursesList .card .card-header,
+html[data-bs-theme='dark'] #myCoursesList .card .card-header,
+html[data-bs-theme='dark'] #availableCourses .card .card-header {
+  background: linear-gradient(
+    135deg,
+    rgba(var(--bs-primary-rgb), 0.28),
+    rgba(var(--bs-primary-rgb), 0.10)
+  ) !important;
+  border-bottom-color: rgba(var(--bs-primary-rgb), 0.4);
+}
+
+/* Course-card footer: very faint tint so the card has color top *and* bottom */
+#coursesList .card .card-footer,
+#myCoursesList .card .card-footer,
+#availableCourses .card .card-footer {
+  background: rgba(var(--bs-primary-rgb), 0.04) !important;
+}
+html[data-bs-theme='dark'] #coursesList .card .card-footer,
+html[data-bs-theme='dark'] #myCoursesList .card .card-footer,
+html[data-bs-theme='dark'] #availableCourses .card .card-footer {
+  background: rgba(var(--bs-primary-rgb), 0.10) !important;
+}
+
+/* Course code text in tenant color so it pops */
+#coursesList .card .card-title,
+#myCoursesList .card .card-title,
+#availableCourses .card .card-title {
+  color: var(--tenant-primary);
+}
+html[data-bs-theme='dark'] #coursesList .card .card-title,
+html[data-bs-theme='dark'] #myCoursesList .card .card-title,
+html[data-bs-theme='dark'] #availableCourses .card .card-title {
+  /* Lighten the text in dark mode so it stays readable on the tinted bg */
+  filter: brightness(1.4) saturate(1.1);
+}
+
+/* Generic card-header underline for non-course cards (keeps the rule
+   that other parts of the UI relied on) */
+.card-header:not(#coursesList .card .card-header):not(#myCoursesList .card .card-header):not(#availableCourses .card .card-header) {
+  border-bottom: 1px solid rgba(var(--bs-primary-rgb), 0.18);
+}
+
+/* Credits badges: tenant-tinted instead of generic gray */
+.card-footer .badge.text-bg-secondary {
+  background-color: rgba(var(--bs-primary-rgb), 0.15) !important;
+  color: var(--tenant-primary) !important;
+  border: 1px solid rgba(var(--bs-primary-rgb), 0.3);
+}
+html[data-bs-theme='dark'] .card-footer .badge.text-bg-secondary {
+  background-color: rgba(var(--bs-primary-rgb), 0.22) !important;
+  color: #fff !important;
+}
+
+/* Sidebar nav: hover tint matches tenant */
+.sidebar-nav .nav-link:hover {
+  background-color: rgba(var(--bs-primary-rgb), 0.08);
+}
+html[data-bs-theme='dark'] .sidebar-nav .nav-link:hover {
+  background-color: rgba(var(--bs-primary-rgb), 0.18);
+}
+
+/* Subtle dark-mode card surface — gives layering vs the body bg */
+html[data-bs-theme='dark'] .card {
+  background-color: #23262b !important;
+  border-color: #2d3036 !important;
+}
+html[data-bs-theme='dark'] .card-header,
+html[data-bs-theme='dark'] .card-footer {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* Tables get a tenant-color header underline in both modes */
+.table > thead {
+  border-bottom: 2px solid var(--tenant-primary);
+}
+
+/* <details> summaries inside cards — tenant accent on the marker */
+.card details summary {
+  cursor: pointer;
+}
+.card details summary:hover {
+  color: var(--tenant-primary);
+}
+.card details[open] summary {
+  color: var(--tenant-primary);
+}
+
+/* Course cards in the "Join a Course" list are click-to-join. Treat the
+   whole card as a button: cursor, stronger hover lift, and a fade while a
+   join request is in flight. */
+.card.course-joinable {
+  cursor: pointer;
+}
+.card.course-joinable:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 0.75rem 1.25rem rgba(var(--bs-primary-rgb), 0.35) !important;
+}
+.card.course-joinable.joining {
+  opacity: 0.55;
+  pointer-events: none;
+}

@@ -1,57 +1,103 @@
-# Getting Started
+# Student Logs — Multi-Tenant Web App
 
-0. Hover on the icons above right to see the tooltips. Click the icon that says _Open Preview to the side_ to see this markdown rendered as it was intended to be viewed. Close this file (**readme.md**). The preview will remain open.
+A role-based, multi-tenant student-logs system for **UVU** and **UofU**. Each
+tenant gets its own catalog, branding, and isolated data; users are scoped to a
+single school by an enum on their record (per the practicum spec).
 
-1. Click _Fork_ icon above left.
+## Stack
 
-2. Click _Share_ icon above left. Record your unique URL.
+- **Backend**: Node.js, Express, MongoDB (Mongoose)
+- **Auth**: JWT (bcrypt-hashed passwords, 8h tokens, cross-tenant guard)
+- **Frontend**: TypeScript → vanilla JS, jQuery, Bootstrap 5.3
+- **Tests**: Mocha + supertest (13 tests covering auth, RBAC, tenant isolation)
 
-3. Reload this browser tab with your unique URL. You'll have to repeat step #0.
+## Quick start
 
-# Backend
+```bash
+npm install
+echo "MONGO_URI=mongodb://localhost:27017/student_logs" > .env
+echo "JWT_SECRET=dev-secret-change-me" >> .env
+npm run seed       # populates both tenants with users, courses, sample logs
+npm run server     # http://localhost:3000
+```
 
-4. In Terminal panel below, run `npm run server` to start the app server. You will see `index.html` in `public` rendered in a panel to the right.
+Open one of:
 
-## Backend Notes
+- UVU  → <http://localhost:3000/uvu/login>
+- UofU → <http://localhost:3000/uofu/login>
 
-- You will use this backend for many future practicums.
+## Test credentials
 
-- **json-server** is a spoofed server, not a robust backend. It's an easy and awesome prototyping tool to see if your client works without you first having to write your server.
+All passwords are deliberately memorable for grading.
 
-- You will write a robust server in a future Practicum that replaces **json-server**.
+| Tenant | Role    | Username       | Password |
+| ------ | ------- | -------------- | -------- |
+| UVU    | admin   | `root_uvu`     | `willy`  |
+| UVU    | teacher | `prof_uvu`     | `teach`  |
+| UVU    | student | `student_uvu`  | `learn`  |
+| UofU   | admin   | `root_uofu`    | `swoopy` |
+| UofU   | teacher | `prof_uofu`    | `teach`  |
+| UofU   | student | `student_uofu` | `learn`  |
 
-# Frontend
+## Multi-tenancy at a glance
 
-5. Complete the _TODOs_ in **index.html**, **style.css**, and **script.js**.
+The professor's spec calls for a User collection with `role` and `tenant`
+enums. Both live on `models/User.js`:
 
-6. Make sure you comply with the **Negative Requirements** below.
+```js
+role:   { enum: ['admin', 'teacher', 'student'], required: true }
+tenant: { enum: ['uvu', 'uofu'],                 required: true }
+```
 
-7. Reset **db.json** back to its original contents (**db.bak.json**).
+The tenant is also part of every URL — pages at `/:tenant/{login,admin,teacher,student}`,
+APIs at `/api/:tenant/{auth,users,courses,logs}`. Middleware enforces that a
+JWT's `tenant` claim matches the URL tenant on every protected request, so a
+UVU token can never read UofU data.
 
-8. Submit your Practicum Vanilla URL.
+The two schools intentionally render their course catalogs differently —
+UVU uses its published catalog format ("CS 3380. JavaScript Software Development. (3 Credits)"),
+UofU uses its requirements-page format with "Required Requisite(s):", "Semesters
+Typically Offered:", and so on. Multi-tenancy isn't just a CSS swap.
 
-9. Do your two peer reviews in class. Canvas will auto-assign them at the deadline.
+## Repo layout
 
-10. Rejoice like a Provo squirrel finding a Brazil nut.
+```
+models/         Mongoose schemas (User, Course, Log)
+routes/         Express routers — auth, users, courses, logs
+repositories/   Tenant-scoped data accessors
+middleware/     auth.js (tenant + JWT), rbac.js (role gating)
+server.js       Wires routes, validates :tenant, serves /public
+seed.js         Drops + re-seeds both catalogs and the test users above
+src/ts/         TypeScript source for the dashboards
+public/         HTML, CSS, compiled JS, tenant logos
+test/           Mocha integration tests (auth, RBAC, tenant isolation)
+```
 
-## Negative Requirements
+## Running the tests
 
-[ ] Don't use non-Chrome browser.
+```bash
+npm test
+```
 
-[ ] Don't change any html tag with a _data-cy_ attribute. You can add html tags.
+13 tests across three suites: `Authentication`, `Tenant Isolation`, `RBAC`.
+Each suite spins up its own MongoDB connection and tears down after.
 
-[ ] No third party libraries.
+## Security model (short)
 
-[ ] Don't violate CRAP design principles.
+- Passwords hashed with bcrypt (cost 10); never returned in JSON.
+- JWT carries `userId`, `username`, `role`, `tenant`. The token's `tenant`
+  must match the URL tenant on every API call — enforced in `middleware/auth.js`.
+- Role-based access is enforced server-side via `requireRole(...)` on each
+  route. Failed attempts return 403 with `forceLogout: true`, which the client
+  uses to redirect to login.
+- Self-signup is restricted to `student` and `teacher`. Admins are created
+  only by other admins.
 
-[ ] Don't add images (other than favicon).
+## Notes for the grader
 
-[ ] Don't add files (other than favicon).
-
-[ ] No authentication (that'll come later).
-
-[ ] No testing (that'll come later).
-
-[ ] Don't add a new course or a new student (they'll come later).
-
-[ ] No updating or deleting a past log. The log is an archive, i.e. an immutable record of history.
+- Per the prof's clarification, JWT and OAuth2 are not strictly required for
+  the final project. JWT is used here because it was already wired and gives a
+  cleaner cross-tenant story than session cookies.
+- The UofU catalog is the live requirements export from the Kahlert School
+  of Computing, with course titles filled in only where cross-listings made
+  them unambiguous. UVU's catalog is the official course listings.

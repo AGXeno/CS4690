@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2018",
+    "lib": ["ES2018", "DOM"],
+    "module": "none",
+    "outDir": "./public/js",
+    "rootDir": "./src/ts",
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": ["jquery"]
+  },
+  "include": ["src/ts/**/*.ts"]
+}

@@ -1,0 +1,51 @@
+/* UofU Theme — Red #CC0000 */
+:root,
+[data-bs-theme='light'] {
+  --bs-primary: #CC0000;
+  --bs-primary-rgb: 204, 0, 0;
+  --tenant-primary: #CC0000;
+  --tenant-primary-hover: #a30000;
+  --tenant-logo: none;
+}
+
+[data-bs-theme='dark'] {
+  --bs-primary: #CC0000;
+  --bs-primary-rgb: 204, 0, 0;
+  --tenant-primary: #CC0000;
+  --tenant-primary-hover: #a30000;
+}
+
+.bg-tenant {
+  background-color: var(--tenant-primary) !important;
+}
+
+.btn-tenant {
+  background-color: var(--tenant-primary);
+  border-color: var(--tenant-primary);
+  color: #fff;
+}
+
+.btn-tenant:hover {
+  background-color: var(--tenant-primary-hover);
+  border-color: var(--tenant-primary-hover);
+  color: #fff;
+}
+
+.btn-outline-tenant {
+  color: var(--tenant-primary);
+  border-color: var(--tenant-primary);
+}
+
+.btn-outline-tenant:hover {
+  background-color: var(--tenant-primary);
+  color: #fff;
+}
+
+.text-tenant {
+  color: var(--tenant-primary) !important;
+}
+
+.sidebar-nav .nav-link.active {
+  background-color: var(--tenant-primary);
+  color: #fff !important;
+}
